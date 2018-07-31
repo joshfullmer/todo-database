@@ -8,6 +8,29 @@ public class Todo {
     private String title;
     private String description;
 
+    public Todo(int id, Date dueDate, String title, String description) {
+        this.id = id;
+        this.dueDate = dueDate;
+        this.title = title;
+        this.description = description;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public Date getDueDate() {
+        return this.dueDate;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
     public static int addTodo(Date dueDate, String title, String description) {
         // TODO: Build addTodo
         // returns the id of the task that's created
