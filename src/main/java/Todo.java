@@ -1,4 +1,5 @@
-import java.sql.Connection;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Todo {
@@ -8,8 +9,7 @@ public class Todo {
     private String title;
     private String description;
 
-    public Todo(int id, Date dueDate, String title, String description) {
-        this.id = id;
+    public Todo(Date dueDate, String title, String description) {
         this.dueDate = dueDate;
         this.title = title;
         this.description = description;
@@ -31,29 +31,99 @@ public class Todo {
         return this.description;
     }
 
-    public static int addTodo(Date dueDate, String title, String description) {
-        // TODO: Build addTodo
-        // returns the id of the task that's created
-
-        return 0;
+    private void setId(int id) {
+        this.id = id;
     }
 
-    public static Todo[] getAllTodos() {
-        // TODO: Build getAllTodos
+    public static Todo create(Todo todo) {
+        Database database = new Database();
+        String sql = "INSERT INTO Todo(DueDate, Title, Description) VALUES(?,?,?)";
 
-        return new Todo[0];
+        try (Connection connection = database.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, todo.getDueDate().getTime());
+            preparedStatement.setString(2, todo.getTitle());
+            preparedStatement.setString(3, todo.getDescription());
+            preparedStatement.executeUpdate();
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    todo.setId(generatedKeys.getInt(1));
+                }
+            }
+        } catch (SQLException se) {
+            System.out.println(se.getMessage());
+        }
+
+        return todo;
     }
 
-    public static Todo[] getTodosDueSoon() {
-        // TODO: Build getTodosDueSoon
-        // Returns a list of todos that are due today or tomorrow
+    public static ArrayList<Todo> getAllTodos() {
+        String sql = "SELECT * FROM Todo;";
 
-        return new Todo[0];
+        return getTodosFromSQL(sql);
     }
 
-    public static Todo[] getTodosInCategory(int categoryId) {
+    public static ArrayList<Todo> getTodosDueSoon() {
+        // Returns array of tasks due today or tomorrow
+        String sql = "SELECT * FROM Todo\n" +
+                     "WHERE date(datetime(DueDate / 1000, 'unixepoch')) = date('now')\n" +
+                     "   OR date(datetime(DueDate / 1000, 'unixepoch')) = date('now', '+1 days');";
+
+        return getTodosFromSQL(sql);
+    }
+
+    public static ArrayList<Todo> getTodosInCategory(int categoryId) {
         // TODO: Build getTodosInCategory
 
-        return new Todo[0];
+        Database database = new Database();
+        String sql = "SELECT * FROM Todo\n" +
+                     "INNER JOIN TodoCategoryAssign\n" +
+                     "ON Todo.Id=TodoCategoryAssign.TodoId\n" +
+                     "WHERE TodoCategoryAssign.CategoryId=?;";
+
+        ArrayList<Todo> todos = new ArrayList<>();
+
+        try (Connection connection = database.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, categoryId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            todos = getTodosFromResultSet(resultSet);
+        } catch (SQLException se) {
+            System.out.println(se.getMessage());
+        }
+
+        return todos;
+    }
+
+    private static ArrayList<Todo> getTodosFromSQL(String sql) {
+        Database database = new Database();
+        ArrayList<Todo> todos = new ArrayList<>();
+
+        try (Connection connection = database.connect();
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            todos = getTodosFromResultSet(resultSet);
+        } catch (SQLException se) {
+            System.out.println(se.getMessage());
+        }
+
+        return todos;
+    }
+
+    private static ArrayList<Todo> getTodosFromResultSet(ResultSet resultSet) throws SQLException {
+        ArrayList<Todo> todos = new ArrayList<>();
+
+        while (resultSet.next()) {
+            Date date = new Date(resultSet.getLong("DueDate"));
+            String title = resultSet.getString("Title");
+            String description = resultSet.getString("Description");
+            Todo todo = new Todo(date, title, description);
+            todos.add(todo);
+        }
+
+        return todos;
+
     }
 }
