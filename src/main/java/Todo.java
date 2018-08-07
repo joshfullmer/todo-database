@@ -35,7 +35,7 @@ public class Todo {
         this.id = id;
     }
 
-    public static Todo create(Todo todo) {
+    public static int create(Todo todo) {
         Database database = new Database();
         String sql = "INSERT INTO Todo(DueDate, Title, Description) VALUES(?,?,?)";
 
@@ -54,7 +54,7 @@ public class Todo {
             System.out.println(se.getMessage());
         }
 
-        return todo;
+        return todo.getId();
     }
 
     public static ArrayList<Todo> getAllTodos() {
@@ -73,7 +73,7 @@ public class Todo {
     }
 
     public static ArrayList<Todo> getTodosInCategory(int categoryId) {
-        // TODO: Build getTodosInCategory
+        // Gets a list of all todos in a given category, by category ID
 
         Database database = new Database();
         String sql = "SELECT * FROM Todo\n" +
@@ -124,6 +124,5 @@ public class Todo {
         }
 
         return todos;
-
     }
 }

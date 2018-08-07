@@ -36,8 +36,8 @@ public class TodoTest {
         String title = "Test Title";
         String description = "Test Description";
         Todo todo = new Todo(date, title, description);
-        Todo.create(todo);
-        assertEquals(1, todo.getId());
+        int todoId = Todo.create(todo);
+        assertEquals(1, todoId);
         assertEquals(date, todo.getDueDate());
         assertEquals(title, todo.getTitle());
         assertEquals(description, todo.getDescription());
