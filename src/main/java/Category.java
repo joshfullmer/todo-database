@@ -69,9 +69,8 @@ public class Category {
     }
 
     public static String getCategoryName(int id) {
-        // TODO: Build getCategoryName
         Database database = new Database();
-        String sql = "SELECT Name FROM Category WHERE Id=?";
+        String sql = "SELECT Name FROM Category WHERE Id=?;";
 
         String name = null;
 
