@@ -1,8 +1,8 @@
 import java.sql.*;
 
-public class Database {
+class Database {
 
-    public Connection connect() {
+    Connection connect() {
         String url = "jdbc:sqlite:todo.db";
         Connection connection = null;
         try {
@@ -14,7 +14,7 @@ public class Database {
         return connection;
     }
 
-    public void initializeDatabase() {
+    void initializeDatabase() {
 
         String todoDrop = "DROP TABLE IF EXISTS Todo;";
 

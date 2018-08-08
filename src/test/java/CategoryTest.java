@@ -12,12 +12,18 @@ public class CategoryTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private Database database;
-
     @Before
     public void setUp() {
-        database = new Database();
+        Database database = new Database();
         database.initializeDatabase();
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfCategoryIsNullOrEmpty() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Category name cannot be null or empty");
+        new Category("");
+        new Category(null);
     }
 
     @Test

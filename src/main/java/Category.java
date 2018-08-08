@@ -1,20 +1,23 @@
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Category {
+class Category {
 
     private int id;
     private String name;
 
-    public Category(String name) {
+    Category(String name) {
+        if (name.equals("")) {
+            throw new IllegalArgumentException("Category name cannot be null or empty");
+        }
         this.name = name;
     }
 
-    public int getId() {
+    private int getId() {
         return this.id;
     }
 
-    public String getName() {
+    String getName() {
         return this.name;
     }
 
@@ -22,7 +25,7 @@ public class Category {
         this.id = id;
     }
 
-    public static int create(Category category) {
+    static int create(Category category) {
         // returns the id of the created category
 
         Database database = new Database();
@@ -58,7 +61,7 @@ public class Category {
         return category.getId();
     }
 
-    public static ArrayList<Category> getAllCategories() {
+    static ArrayList<Category> getAllCategories() {
         Database database = new Database();
         String sql = "SELECT * FROM Category;";
 
@@ -81,7 +84,7 @@ public class Category {
         return categories;
     }
 
-    public static String getCategoryName(int id) {
+    static String getCategoryName(int id) {
         Database database = new Database();
         String sql = "SELECT Name FROM Category WHERE Id=?;";
 

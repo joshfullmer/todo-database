@@ -2,14 +2,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Todo {
+class Todo {
 
     private int id;
     private Date dueDate;
     private String title;
     private String description;
 
-    public Todo(Date dueDate, String title, String description) {
+    Todo(Date dueDate, String title, String description) {
         if (dueDate == null) {
             throw new IllegalArgumentException("DueDate cannot be null");
         }
@@ -26,19 +26,19 @@ public class Todo {
         this.description = description;
     }
 
-    public int getId() {
+    private int getId() {
         return this.id;
     }
 
-    public Date getDueDate() {
+    Date getDueDate() {
         return this.dueDate;
     }
 
-    public String getTitle() {
+    String getTitle() {
         return this.title;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return this.description;
     }
 
@@ -46,7 +46,7 @@ public class Todo {
         this.id = id;
     }
 
-    public static int create(Todo todo) {
+    static int create(Todo todo) {
         Database database = new Database();
         String sql = "INSERT INTO Todo(DueDate, Title, Description) VALUES(?,?,?)";
 
@@ -68,13 +68,13 @@ public class Todo {
         return todo.getId();
     }
 
-    public static ArrayList<Todo> getAllTodos() {
+    static ArrayList<Todo> getAllTodos() {
         String sql = "SELECT * FROM Todo;";
 
         return getTodosFromSQL(sql);
     }
 
-    public static ArrayList<Todo> getTodosDueSoon() {
+    static ArrayList<Todo> getTodosDueSoon() {
         // Returns array of tasks due today or tomorrow
         String sql = "SELECT * FROM Todo\n" +
                      "WHERE date(datetime(DueDate / 1000, 'unixepoch')) = date('now')\n" +
@@ -83,7 +83,7 @@ public class Todo {
         return getTodosFromSQL(sql);
     }
 
-    public static ArrayList<Todo> getTodosInCategory(int categoryId) {
+    static ArrayList<Todo> getTodosInCategory(int categoryId) {
         // Gets a list of all todos in a given category, by category ID
 
         Database database = new Database();

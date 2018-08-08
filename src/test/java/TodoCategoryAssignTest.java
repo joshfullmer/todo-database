@@ -1,5 +1,7 @@
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.Date;
 
@@ -9,12 +11,29 @@ import static junit.framework.TestCase.assertTrue;
 
 public class TodoCategoryAssignTest {
 
-    private Database database;
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
-        database = new Database();
+        Database database = new Database();
         database.initializeDatabase();
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfTodoDoesNotExist() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Todo not found");
+        Category.create(new Category("Test Category"));
+        TodoCategoryAssign.categorizeTodo(1, 1);
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfCategoryDoesNotExist() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Category not found");
+        Todo.create(new Todo(new Date(), "Test Title", "Test Description"));
+        TodoCategoryAssign.categorizeTodo(1, 1);
     }
 
     @Test
