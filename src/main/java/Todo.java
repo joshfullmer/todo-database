@@ -10,6 +10,17 @@ public class Todo {
     private String description;
 
     public Todo(Date dueDate, String title, String description) {
+        if (dueDate == null) {
+            throw new IllegalArgumentException("DueDate cannot be null");
+        }
+
+        if (title.equals("")) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
+
+        if (description.equals("")) {
+            throw new IllegalArgumentException("Description cannot be null or empty");
+        }
         this.dueDate = dueDate;
         this.title = title;
         this.description = description;

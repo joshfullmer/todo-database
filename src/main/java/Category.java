@@ -26,14 +26,27 @@ public class Category {
         // returns the id of the created category
 
         Database database = new Database();
-        String sql = "INSERT INTO Category(Name) VALUES(?);";
+
+        // Check if category exists by the same name
+        String categoryExists = "SELECT * FROM Category WHERE Name=?";
+
+        String createCategory = "INSERT INTO Category(Name) VALUES(?);";
 
         try (Connection connection = database.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, category.getName());
-            preparedStatement.executeUpdate();
+             PreparedStatement preparedStatement1 = connection.prepareStatement(categoryExists);
+             PreparedStatement preparedStatement2 = connection.prepareStatement(createCategory)) {
+            preparedStatement1.setString(1, category.getName());
 
-            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+            try (ResultSet resultSet = preparedStatement1.executeQuery()) {
+                if (resultSet.next()) {
+                    throw new IllegalArgumentException("Category exists by this name");
+                }
+            }
+
+            preparedStatement2.setString(1, category.getName());
+            preparedStatement2.executeUpdate();
+
+            try (ResultSet resultSet = preparedStatement2.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     category.setId(resultSet.getInt(1));
                 }
@@ -72,7 +85,7 @@ public class Category {
         Database database = new Database();
         String sql = "SELECT Name FROM Category WHERE Id=?;";
 
-        String name = null;
+        String name = "";
 
         try (Connection connection = database.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

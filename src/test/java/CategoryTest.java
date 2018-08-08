@@ -1,11 +1,16 @@
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 
 public class CategoryTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private Database database;
 
@@ -13,6 +18,14 @@ public class CategoryTest {
     public void setUp() {
         database = new Database();
         database.initializeDatabase();
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfCategoryExists() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Category exists by this name");
+        Category.create(new Category("Test Category"));
+        Category.create(new Category("Test Category"));
     }
 
     @Test

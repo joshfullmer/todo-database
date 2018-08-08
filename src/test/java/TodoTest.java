@@ -3,19 +3,22 @@ import static org.junit.Assert.assertEquals;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class TodoTest {
 
     private Database database;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -24,15 +27,32 @@ public class TodoTest {
     }
 
     @Test
-    public void testTodoCreation() {
-        String dateString = "Aug 6 2018 11:29:33.893 UTC";
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy HH:mm:ss.SSS zzz");
+    public void throwsIllegalArgumentExceptionIfDateIsNull() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("DueDate cannot be null");
         Date date = null;
-        try {
-            date = sdf.parse(dateString);
-        } catch (ParseException pe) {
-            System.out.println(pe.getMessage());
-        }
+        new Todo(date, "Test Title", "Test Description");
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfTitleIsNullOrEmpty() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Title cannot be null or empty");
+        new Todo(new Date(), "", "Test Description");
+        new Todo(new Date(), null, "Test Description");
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfDescriptionIsNullOrEmpty() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Description cannot be null or empty");
+        new Todo(new Date(), "Test Title", "");
+        new Todo(new Date(), "Test Title", null);
+    }
+
+    @Test
+    public void testTodoCreation() {
+        Date date = new Date();
         String title = "Test Title";
         String description = "Test Description";
         Todo todo = new Todo(date, title, description);
@@ -45,14 +65,7 @@ public class TodoTest {
 
     @Test
     public void testTodoListRetrieval() {
-        String dateString = "Aug 6 2018 11:29:33.893 UTC";
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy HH:mm:ss.SSS zzz");
-        Date date = null;
-        try {
-            date = sdf.parse(dateString);
-        } catch (ParseException pe) {
-            System.out.println(pe.getMessage());
-        }
+        Date date = new Date();
         String title = "Test Title";
         String description = "Test Description";
         Todo todo = new Todo(date, title, description);
