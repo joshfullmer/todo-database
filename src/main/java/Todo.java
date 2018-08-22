@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 class Todo {
 
@@ -14,12 +15,20 @@ class Todo {
             throw new IllegalArgumentException("DueDate cannot be null");
         }
 
+        if (title == null) {
+            throw new IllegalArgumentException("Title cannot be null");
+        }
+
         if (title.equals("")) {
-            throw new IllegalArgumentException("Title cannot be null or empty");
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
+
+        if (description == null) {
+            throw new IllegalArgumentException("Description cannot be null");
         }
 
         if (description.equals("")) {
-            throw new IllegalArgumentException("Description cannot be null or empty");
+            throw new IllegalArgumentException("Description cannot be empty");
         }
         this.dueDate = dueDate;
         this.title = title;
@@ -68,13 +77,13 @@ class Todo {
         return todo.getId();
     }
 
-    static ArrayList<Todo> getAllTodos() {
+    static List<Todo> getAllTodos() {
         String sql = "SELECT * FROM Todo;";
 
         return getTodosFromSQL(sql);
     }
 
-    static ArrayList<Todo> getTodosDueSoon() {
+    static List<Todo> getTodosDueSoon() {
         // Returns array of tasks due today or tomorrow
         String sql = "SELECT * FROM Todo\n" +
                      "WHERE date(datetime(DueDate / 1000, 'unixepoch')) = date('now')\n" +
@@ -83,7 +92,7 @@ class Todo {
         return getTodosFromSQL(sql);
     }
 
-    static ArrayList<Todo> getTodosInCategory(int categoryId) {
+    static List<Todo> getTodosInCategory(int categoryId) {
         // Gets a list of all todos in a given category, by category ID
 
         Database database = new Database();
@@ -92,7 +101,7 @@ class Todo {
                      "ON Todo.Id=TodoCategoryAssign.TodoId\n" +
                      "WHERE TodoCategoryAssign.CategoryId=?;";
 
-        ArrayList<Todo> todos = new ArrayList<>();
+        List<Todo> todos = new ArrayList<>();
 
         try (Connection connection = database.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -107,9 +116,9 @@ class Todo {
         return todos;
     }
 
-    private static ArrayList<Todo> getTodosFromSQL(String sql) {
+    private static List<Todo> getTodosFromSQL(String sql) {
         Database database = new Database();
-        ArrayList<Todo> todos = new ArrayList<>();
+        List<Todo> todos = new ArrayList<>();
 
         try (Connection connection = database.connect();
              Statement statement = connection.createStatement()) {
@@ -123,8 +132,8 @@ class Todo {
         return todos;
     }
 
-    private static ArrayList<Todo> getTodosFromResultSet(ResultSet resultSet) throws SQLException {
-        ArrayList<Todo> todos = new ArrayList<>();
+    private static List<Todo> getTodosFromResultSet(ResultSet resultSet) throws SQLException {
+        List<Todo> todos = new ArrayList<>();
 
         while (resultSet.next()) {
             Date date = new Date(resultSet.getLong("DueDate"));

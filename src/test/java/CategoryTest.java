@@ -19,11 +19,17 @@ public class CategoryTest {
     }
 
     @Test
-    public void throwsIllegalArgumentExceptionIfCategoryIsNullOrEmpty() {
+    public void throwsIllegalArgumentExceptionIfCategoryIsNull() {
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Category name cannot be null or empty");
-        new Category("");
+        expectedException.expectMessage("Category name cannot be null");
         new Category(null);
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfCategoryIsEmpty() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Category name cannot be empty");
+        new Category("");
     }
 
     @Test

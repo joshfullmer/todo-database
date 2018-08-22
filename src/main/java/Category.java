@@ -7,8 +7,11 @@ class Category {
     private String name;
 
     Category(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Category name cannot be null");
+        }
         if (name.equals("")) {
-            throw new IllegalArgumentException("Category name cannot be null or empty");
+            throw new IllegalArgumentException("Category name cannot be empty");
         }
         this.name = name;
     }

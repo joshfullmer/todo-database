@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TodoTest {
 
@@ -35,19 +36,31 @@ public class TodoTest {
     }
 
     @Test
-    public void throwsIllegalArgumentExceptionIfTitleIsNullOrEmpty() {
+    public void throwsIllegalArgumentExceptionIfTitleIsNull() {
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Title cannot be null or empty");
-        new Todo(new Date(), "", "Test Description");
+        expectedException.expectMessage("Title cannot be null");
         new Todo(new Date(), null, "Test Description");
     }
 
     @Test
-    public void throwsIllegalArgumentExceptionIfDescriptionIsNullOrEmpty() {
+    public void throwsIllegalArgumentExceptionIfTitleIsEmpty() {
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Description cannot be null or empty");
-        new Todo(new Date(), "Test Title", "");
+        expectedException.expectMessage("Title cannot be empty");
+        new Todo(new Date(), "", "Test Description");
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfDescriptionIsNull() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Description cannot be null");
         new Todo(new Date(), "Test Title", null);
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfDescriptionIsEmpty() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Description cannot be empty");
+        new Todo(new Date(), "Test Title", "");
     }
 
     @Test
@@ -73,7 +86,7 @@ public class TodoTest {
         for (int i = 0; i < todoCount; i++) {
             Todo.create(todo);
         }
-        ArrayList<Todo> todos = Todo.getAllTodos();
+        List<Todo> todos = Todo.getAllTodos();
         assertEquals(todoCount, todos.size());
     }
 
@@ -94,9 +107,9 @@ public class TodoTest {
         Todo.create(todo2);
         Todo.create(todo3);
 
-        ArrayList<Todo> todos =  Todo.getTodosDueSoon();
+        List<Todo> todos =  Todo.getTodosDueSoon();
         assertEquals(2, todos.size());
-        ArrayList<Todo> allTodos = Todo.getAllTodos();
+        List<Todo> allTodos = Todo.getAllTodos();
         assertEquals(3, allTodos.size());
     }
 
@@ -120,7 +133,7 @@ public class TodoTest {
         todo = new Todo(new Date(), "Test Title", "Test Description");
         Todo.create(todo);
 
-        ArrayList<Todo> todos = Todo.getTodosInCategory(1);
+        List<Todo> todos = Todo.getTodosInCategory(1);
         assertEquals(1, todos.size());
     }
 
