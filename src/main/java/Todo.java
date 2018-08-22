@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -61,7 +62,7 @@ class Todo {
 
         try (Connection connection = database.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, todo.getDueDate().getTime());
+            preparedStatement.setString(1, DateHandler.dateToString(todo.getDueDate()));
             preparedStatement.setString(2, todo.getTitle());
             preparedStatement.setString(3, todo.getDescription());
             preparedStatement.executeUpdate();
@@ -86,8 +87,8 @@ class Todo {
     static List<Todo> getTodosDueSoon() {
         // Returns array of tasks due today or tomorrow
         String sql = "SELECT * FROM Todo\n" +
-                     "WHERE date(datetime(DueDate / 1000, 'unixepoch')) = date('now')\n" +
-                     "   OR date(datetime(DueDate / 1000, 'unixepoch')) = date('now', '+1 days');";
+                     "WHERE date(Todo.DueDate) = date('now')\n" +
+                     "   OR date(Todo.DueDate) = date('now', '+1 days');";
 
         return getTodosFromSQL(sql);
     }
@@ -136,7 +137,13 @@ class Todo {
         List<Todo> todos = new ArrayList<>();
 
         while (resultSet.next()) {
-            Date date = new Date(resultSet.getLong("DueDate"));
+            Date date = null;
+            try {
+                date = DateHandler.stringToDate(resultSet.getString("DueDate"));
+            } catch(ParseException pe) {
+                pe.printStackTrace();
+            }
+
             String title = resultSet.getString("Title");
             String description = resultSet.getString("Description");
             Todo todo = new Todo(date, title, description);

@@ -20,7 +20,7 @@ class Database {
 
         String todoCreate = "CREATE TABLE IF NOT EXISTS Todo (\n"
                           + " Id integer PRIMARY KEY, \n"
-                          + " DueDate integer NOT NULL, \n"
+                          + " DueDate text NOT NULL, \n"
                           + " Title text NOT NULL, \n"
                           + " Description text NOT NULL\n"
                           + ");";
